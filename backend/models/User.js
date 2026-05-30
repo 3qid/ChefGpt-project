@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type: [String],
         default: []
     },
+    wantedFood: {
+        type: [String],
+        default: []
+    },
     unwantedFood: {
         type: [String],
         default: []

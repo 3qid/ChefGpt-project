@@ -1,11 +1,24 @@
 const Chat = require('../models/chat');
+const User = require('../models/User');
 const mongoose = require('mongoose');
 const { GoogleGenAI } = require("@google/genai");
 
 // تهيئة الاتصال بالـ API باستخدام المفتاح المخزن في الـ .env
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-const SYSTEM_INSTRUCTION = "You are a professional chef and cooking assistant. ONLY answer questions about cooking, food, recipes, nutrition, kitchen techniques, and meal planning. If the user asks about anything outside of these topics (like sports, politics, technology, etc.), politely refuse and redirect them to ask about food and cooking.";
+const getBaseInstruction = (user) => {
+    let prefs = [];
+    if (user.wantedFood?.length) prefs.push(`favorite foods: ${user.wantedFood.join(', ')}`);
+    if (user.unwantedFood?.length) prefs.push(`disliked foods: ${user.unwantedFood.join(', ')}`);
+    if (user.allergies?.length) prefs.push(`allergies: ${user.allergies.join(', ')}`);
+    if (user.activityLevel) prefs.push(`activity level: ${user.activityLevel}`);
+
+    const prefText = prefs.length
+        ? `\n\nThe user's preferences are: ${prefs.join('; ')}. Consider these when suggesting recipes and meals, but use your judgment — they are guidelines, not strict rules.`
+        : '';
+
+    return `You are a professional chef and cooking assistant. ONLY answer questions about cooking, food, recipes, nutrition, kitchen techniques, and meal planning. If the user asks about anything outside of these topics (like sports, politics, technology, etc.), politely refuse and redirect them to ask about food and cooking.${prefText}`;
+};
 
 // GET all chats for the authenticated user
 const getChats = async (req, res) => {
@@ -37,12 +50,15 @@ const getChat = async (req, res) => {
 };
 
 // =========================================================================
-// 1. تعديل دالة إنشاء محادثة جديدة (إرسال أول رسالة واستقبال أول رد من Gemini)
+// 1. إنشاء محادثة جديدة (إرسال أول رسالة واستقبال أول رد من Gemini)
 // =========================================================================
 const createChat = async (req, res) => {
     const { prompt } = req.body;
 
     try {
+        const user = await User.findById(req.user._id);
+        const systemInstruction = getBaseInstruction(user);
+
         let finalMessages = [];
         let finalTitle = "New Cooking Chat";
 
@@ -51,7 +67,7 @@ const createChat = async (req, res) => {
                 model: "gemini-3.5-flash",
                 contents: prompt,
                 config: {
-                    systemInstruction: SYSTEM_INSTRUCTION
+                    systemInstruction: systemInstruction
                 }
             });
 
@@ -101,6 +117,9 @@ const updateChat = async (req, res) => {
             return res.status(404).json({ error: 'No such chat found' });
         }
 
+        const user = await User.findById(req.user._id);
+        const systemInstruction = getBaseInstruction(user);
+
         // ب) بناء مصفوفة المحتوى الكاملة: التاريخ + الرسالة الجديدة
         const contents = [
             ...currentChat.messages.map(msg => ({
@@ -115,7 +134,7 @@ const updateChat = async (req, res) => {
             model: 'gemini-3.5-flash',
             contents: contents,
             config: {
-                systemInstruction: SYSTEM_INSTRUCTION
+                systemInstruction: systemInstruction
             }
         });
 

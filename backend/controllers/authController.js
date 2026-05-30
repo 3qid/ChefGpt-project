@@ -39,12 +39,20 @@ const handleErrors = (err) => {
 
 // دالة التسجيل
 const signup_post = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, name, wantedFood, unwantedFood, allergies, activityLevel } = req.body;
 
     try {
-        const user = await User.create({ email, password });
+        const user = await User.create({
+            email,
+            password,
+            name: name || '',
+            wantedFood: wantedFood || [],
+            unwantedFood: unwantedFood || [],
+            allergies: allergies || [],
+            activityLevel: activityLevel || 'moderate'
+        });
         const token = createToken(user._id);
-        res.status(201).json({ user: user._id, email: user.email, name: user.name, token });
+        res.status(201).json({ user: user._id, email: user.email, name: user.name, wantedFood: user.wantedFood, unwantedFood: user.unwantedFood, allergies: user.allergies, activityLevel: user.activityLevel, token });
     }
     catch (err) {
         const errors = handleErrors(err);
@@ -66,7 +74,7 @@ const login_post = async (req, res) => {
         res.cookie('jwt', token, { httpOnly: true, maxAge: 3 * 24 * 60 * 60 * 1000 });
 
         // 4. إرجاع استجابة النجاح مع ID المستخدم والتوكن
-        res.status(200).json({ user: user._id, email: user.email, name: user.name, token });
+        res.status(200).json({ user: user._id, email: user.email, name: user.name, wantedFood: user.wantedFood, unwantedFood: user.unwantedFood, allergies: user.allergies, activityLevel: user.activityLevel, token });
     } 
     catch (err) {
         // 5. في حال فشل الدخول (إيميل خطأ أو باسورد خطأ)
@@ -77,15 +85,30 @@ const login_post = async (req, res) => {
 
 // تحديث الملف الشخصي
 const updateProfile = async (req, res) => {
-    const { name } = req.body;
+    const { name, wantedFood, unwantedFood, allergies, activityLevel } = req.body;
+
+    const updateFields = {};
+    if (name !== undefined) updateFields.name = name;
+    if (wantedFood !== undefined) updateFields.wantedFood = wantedFood;
+    if (unwantedFood !== undefined) updateFields.unwantedFood = unwantedFood;
+    if (allergies !== undefined) updateFields.allergies = allergies;
+    if (activityLevel !== undefined) updateFields.activityLevel = activityLevel;
 
     try {
         const user = await User.findByIdAndUpdate(
             req.user._id,
-            { name },
+            updateFields,
             { new: true }
         );
-        res.status(200).json({ user: user._id, email: user.email, name: user.name });
+        res.status(200).json({
+            user: user._id,
+            email: user.email,
+            name: user.name,
+            wantedFood: user.wantedFood,
+            unwantedFood: user.unwantedFood,
+            allergies: user.allergies,
+            activityLevel: user.activityLevel
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

@@ -7,7 +7,12 @@ const UserProfile = ({ onClose }) => {
   const { logout } = useLogout();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
+  const [wantedFood, setWantedFood] = useState((user?.wantedFood || []).join(", "));
+  const [unwantedFood, setUnwantedFood] = useState((user?.unwantedFood || []).join(", "));
+  const [allergies, setAllergies] = useState((user?.allergies || []).join(", "));
   const [saving, setSaving] = useState(false);
+
+  const parseList = (str) => str.split(",").map(s => s.trim()).filter(Boolean);
 
   const handleSave = async () => {
     if (!user?.token) return;
@@ -19,11 +24,16 @@ const UserProfile = ({ onClose }) => {
           "Content-Type": "application/json",
           authorization: `Bearer ${user.token}`
         },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({
+          name,
+          wantedFood: parseList(wantedFood),
+          unwantedFood: parseList(unwantedFood),
+          allergies: parseList(allergies)
+        })
       });
       const data = await res.json();
       if (res.ok) {
-        const updated = { ...user, name: data.name };
+        const updated = { ...user, name: data.name, wantedFood: data.wantedFood, unwantedFood: data.unwantedFood, allergies: data.allergies };
         localStorage.setItem("user", JSON.stringify(updated));
         dispatch({ type: "LOGIN", payload: updated });
         setEditing(false);
@@ -70,19 +80,19 @@ const UserProfile = ({ onClose }) => {
           </div>
 
           {editing ? (
-            <div style={{ display: "flex", gap: "6px", alignItems: "center", justifyContent: "center" }}>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{
-                  flex: 1, padding: "6px 10px", borderRadius: "6px",
-                  border: "1px solid var(--border-color)",
-                  background: "var(--input-bg)", color: "var(--text-primary)",
-                  fontSize: "14px", outline: "none"
-                }}
-                autoFocus
-                onKeyDown={(e) => e.key === "Enter" && handleSave()}
-              />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <input value={name} onChange={(e) => setName(e.target.value)}
+                style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border-color)", background: "var(--input-bg)", color: "var(--text-primary)", fontSize: "14px", outline: "none" }}
+                autoFocus onKeyDown={(e) => e.key === "Enter" && handleSave()} />
+              <input value={wantedFood} onChange={(e) => setWantedFood(e.target.value)}
+                placeholder="Favorite foods (comma separated)"
+                style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border-color)", background: "var(--input-bg)", color: "var(--text-primary)", fontSize: "12px", outline: "none" }} />
+              <input value={unwantedFood} onChange={(e) => setUnwantedFood(e.target.value)}
+                placeholder="Disliked foods (comma separated)"
+                style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border-color)", background: "var(--input-bg)", color: "var(--text-primary)", fontSize: "12px", outline: "none" }} />
+              <input value={allergies} onChange={(e) => setAllergies(e.target.value)}
+                placeholder="Allergies (comma separated)"
+                style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border-color)", background: "var(--input-bg)", color: "var(--text-primary)", fontSize: "12px", outline: "none" }} />
               <button onClick={handleSave} disabled={saving} style={{
                 background: "var(--accent-color)", color: "#fff",
                 border: "none", borderRadius: "6px", padding: "6px 12px",
@@ -105,6 +115,13 @@ const UserProfile = ({ onClose }) => {
           <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "4px" }}>
             {user?.email || ""}
           </div>
+          {!editing && (
+            <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "8px", textAlign: "left" }}>
+              {user?.wantedFood?.length > 0 && <div>❤️ {user.wantedFood.join(", ")}</div>}
+              {user?.unwantedFood?.length > 0 && <div>💔 {user.unwantedFood.join(", ")}</div>}
+              {user?.allergies?.length > 0 && <div>⚠️ {user.allergies.join(", ")}</div>}
+            </div>
+          )}
         </div>
 
         <button onClick={handleLogout} style={{
