@@ -1,0 +1,127 @@
+.home-layout {
+  display: flex;
+  height: calc(100vh - 56px);
+  background: var(--main-bg);
+  color: var(--text-primary);
+  position: relative;
+}
+
+/* Sidebar */
+.sidebar-container {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* Main area */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 20px;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.menu-btn:hover {
+  background: var(--active-bg);
+}
+
+.chat-title {
+  font-weight: bold;
+  font-size: 15px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Animated dots */
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+  .home-layout {
+    height: calc(100vh - 50px);
+  }
+
+  .sidebar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    width: 280px;
+  }
+
+  .sidebar-container.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+  }
+
+  .menu-btn {
+    display: flex;
+    align-items: center;
+  }
+
+  .chat-header {
+    padding: 8px 12px;
+  }
+
+  .chat-title {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-container {
+    width: 260px;
+  }
+  .chat-header {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+}

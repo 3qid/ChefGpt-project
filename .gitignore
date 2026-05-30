@@ -1,0 +1,6 @@
+node_modules/
+.env
+dist/
+all_project_code.txt
+repomix-output*.xml
+requests.http
