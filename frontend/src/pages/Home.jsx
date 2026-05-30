@@ -113,6 +113,10 @@ const Home = () => {
         </div>
         <ChatWindow selectedChat={selectedChat} loading={loading} />
         <MessageInput input={input} setInput={setInput} onSend={handleSend} loading={loading} inputRef={inputRef} />
+        <p className="chat-disclaimer">
+          ChefGPT is an AI assistant and may occasionally provide inaccurate or incomplete information.
+          Always use your best judgment when preparing food and consult reliable sources for dietary and safety concerns.
+        </p>
       </div>
     </div>
   );
