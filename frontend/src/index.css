@@ -46,32 +46,141 @@ body {
 
 /* Auth form styles */
 form.signup, form.login {
-  max-width: 400px;
+  max-width: 480px;
   margin: 40px auto;
-  padding: 20px;
+  padding: 32px;
   background: var(--chat-bg);
-  border-radius: 4px;
+  border-radius: 16px;
   border: 1px solid var(--border-color);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
 }
-form input {
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: var(--text-primary);
+}
+
+.auth-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.auth-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.auth-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.auth-section h4 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin: 0 0 4px 0;
+}
+
+.section-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 16px 0;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field label {
   display: block;
-  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.field input {
+  display: block;
+  padding: 10px 12px;
   width: 100%;
-  margin: 10px 0 20px 0;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--input-bg);
   color: var(--text-primary);
+  font-size: 14px;
   box-sizing: border-box;
+  transition: border-color 0.2s;
+  outline: none;
 }
-form button {
+
+.field input:focus {
+  border-color: var(--accent-color);
+}
+
+.field-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 12px;
   background: var(--accent-color);
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: 500;
+  transition: opacity 0.2s;
+  margin-top: 20px;
+}
+
+.auth-submit:hover {
+  opacity: 0.9;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-top: 16px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.auth-disclaimer {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.5;
+  margin: 20px 0 0 0;
+  opacity: 0.7;
 }
 
 /* Navbar Styles */

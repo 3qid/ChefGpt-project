@@ -11,13 +11,12 @@ const Login = () => {
     e.preventDefault()
     setError(null)
 
-    // 1. إرسال طلب تسجيل الدخول للـ Backend API
     const response = await fetch('http://localhost:3000/api/user/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ email, password })
     })
-    
+
     const json = await response.json()
 
     if (!response.ok) {
@@ -25,25 +24,37 @@ const Login = () => {
     }
 
     if (response.ok) {
-      // 2. حفظ البيانات الكاملة (التي تحتوي على الـ token والـ email) في المتصفح
       localStorage.setItem('user', JSON.stringify(json))
-
-      // 3. تحديث الـ Context بالـ Object الكامل القادم من السيرفر 🔑
       dispatch({ type: 'LOGIN', payload: json })
     }
   }
 
   return (
     <form className="login" onSubmit={handleSubmit}>
-      <h3>Log In</h3>
-      <label>Email address:</label>
-      <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} />
-      
-      <label>Password:</label>
-      <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} />
+      <div className="auth-header">
+        <h3>Welcome Back</h3>
+        <p>Sign in to continue cooking with ChefGPT</p>
+      </div>
 
-      <button>Log in</button>
-      {error && <div className="error" style={{color: "red", marginTop: "10px"}}>{error}</div>}
+      <div className="auth-section">
+        <div className="field">
+          <label>Email address</label>
+          <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} placeholder="your@email.com" />
+        </div>
+        <div className="field">
+          <label>Password</label>
+          <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} placeholder="Enter your password" />
+        </div>
+      </div>
+
+      <button className="auth-submit">Sign in</button>
+
+      {error && <div className="auth-error">{error}</div>}
+
+      <p className="auth-disclaimer">
+        ChefGPT is an AI assistant and may occasionally provide inaccurate or incomplete information.
+        Always use your best judgment when preparing food and consult reliable sources for dietary and safety concerns.
+      </p>
     </form>
   )
 }

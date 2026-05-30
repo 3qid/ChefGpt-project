@@ -22,31 +22,57 @@ const Signup = () => {
 
   return (
     <form className="signup" onSubmit={handleSubmit}>
-      <h3>Sign Up</h3>
+      <div className="auth-header">
+        <h3>Create Account</h3>
+        <p>Join ChefGPT and start cooking smarter</p>
+      </div>
 
-      <label>Email address:</label>
-      <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} />
+      <div className="auth-section">
+        <h4>Account</h4>
+        <div className="field">
+          <label>Email address</label>
+          <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} placeholder="your@email.com" />
+        </div>
+        <div className="field">
+          <label>Password</label>
+          <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} placeholder="Min. 6 characters" />
+        </div>
+        <div className="field">
+          <label>Name</label>
+          <input type="text" onChange={(e) => setName(e.target.value)} value={name} placeholder="Your name" />
+        </div>
+      </div>
 
-      <label>Password:</label>
-      <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} />
+      <div className="auth-section">
+        <h4>Food Preferences</h4>
+        <p className="section-hint">Help the AI tailor recipes to your taste</p>
+        <div className="field">
+          <label>Favorite foods</label>
+          <input type="text" onChange={(e) => setWantedFood(e.target.value)} value={wantedFood} placeholder="e.g. seafood, chicken, pasta" />
+          <span className="field-hint">Separate items with commas</span>
+        </div>
+        <div className="field">
+          <label>Disliked foods</label>
+          <input type="text" onChange={(e) => setUnwantedFood(e.target.value)} value={unwantedFood} placeholder="e.g. mushrooms, fish" />
+          <span className="field-hint">Separate items with commas</span>
+        </div>
+        <div className="field">
+          <label>Allergies</label>
+          <input type="text" onChange={(e) => setAllergies(e.target.value)} value={allergies} placeholder="e.g. peanuts, gluten, dairy" />
+          <span className="field-hint">The AI will avoid these ingredients when possible</span>
+        </div>
+      </div>
 
-      <label>Name:</label>
-      <input type="text" onChange={(e) => setName(e.target.value)} value={name} placeholder="Your name" />
+      <button className="auth-submit" disabled={isLoading}>
+        {isLoading ? "Creating account..." : "Create account"}
+      </button>
 
-      <label>Favorite foods:</label>
-      <input type="text" onChange={(e) => setWantedFood(e.target.value)} value={wantedFood} placeholder="e.g. chicken, rice, pasta" />
-      <small style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Separate with commas</small>
+      {error && <div className="auth-error">{error}</div>}
 
-      <label>Disliked foods:</label>
-      <input type="text" onChange={(e) => setUnwantedFood(e.target.value)} value={unwantedFood} placeholder="e.g. mushrooms, fish" />
-      <small style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Separate with commas</small>
-
-      <label>Allergies:</label>
-      <input type="text" onChange={(e) => setAllergies(e.target.value)} value={allergies} placeholder="e.g. peanuts, gluten, dairy" />
-      <small style={{ color: "var(--text-secondary)", fontSize: "12px" }}>Separate with commas — the AI will avoid these ingredients</small>
-
-      <button disabled={isLoading}>Sign up</button>
-      {error && <div className="error" style={{color: "red", marginTop: "10px"}}>{error}</div>}
+      <p className="auth-disclaimer">
+        ChefGPT is an AI assistant and may occasionally provide inaccurate or incomplete information.
+        Always use your best judgment when preparing food and consult reliable sources for dietary and safety concerns.
+      </p>
     </form>
   )
 }
